@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Prediction</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+        }
+        .title {
+            font-family: 'Arial', sans-serif;
+            color: #343a40;
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center title">Salary Prediction</h2>
+        <form id="salary-form">
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" class="form-control" id="age" required>
+            </div>
+            <div class="form-group">
+                <label for="leaves-used">Leaves Used</label>
+                <input type="number" class="form-control" id="leaves-used" required>
+            </div>
+            <div class="form-group">
+                <label for="leaves-remaining">Leaves Remaining</label>
+                <input type="number" class="form-control" id="leaves-remaining" required>
+            </div>
+            <div class="form-group">
+                <label for="ratings">Ratings</label>
+                <input type="number" class="form-control" id="ratings" step="0.1" required>
+            </div>
+            <div class="form-group">
+                <label for="past-exp">Past Experience (years)</label>
+                <input type="number" class="form-control" id="past-exp" required>
+            </div>
+            <div class="form-group">
+                <label for="tenure">Tenure (years)</label>
+                <input type="number" class="form-control" id="tenure" required>
+            </div>
+            <div class="form-group">
+                <label for="sex">Sex</label>
+                <select class="form-control" id="sex" required>
+                    <option value="0">Male</option>
+                    <option value="1">Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="designation">Designation</label>
+                <select class="form-control" id="designation" required>
+                    <option value="0">Analyst</option>
+                    <option value="1">Associate</option>
+                    <option value="2">Director</option>
+                    <option value="3">Manager</option>
+                    <option value="4">Senior Analyst</option>
+                    <option value="5">Senior Manager</option>
+                    <!-- Add other options as needed -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="unit">Unit</label>
+                <select class="form-control" id="unit" required>['Finance' 'Web' 'IT' 'Operations' 'Marketing' 'Management']
+                    <option value="0">Finance</option>
+                    <option value="1">IT</option>
+                    <option value="1">Management</option>
+                    <option value="1">Marketing</option>
+                    <option value="1">Operations</option>
+                    <option value="1">Web</option>
+                    <!-- Add other options as needed -->
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Predict Salary</button>
+        </form>
+        <div class="result text-center mt-3">
+            <h4>Predicted Salary: <span id="predicted-salary"></span></h4>
+        </div>
+    </div>
+    <script>
+        document.getElementById('salary-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const data = {
+                features: [
+                    parseFloat(document.getElementById('age').value),
+                    parseFloat(document.getElementById('leaves-used').value),
+                    parseFloat(document.getElementById('leaves-remaining').value),
+                    parseFloat(document.getElementById('ratings').value),
+                    parseFloat(document.getElementById('past-exp').value),
+                    parseFloat(document.getElementById('tenure').value),
+                    parseInt(document.getElementById('sex').value),
+                    parseInt(document.getElementById('designation').value),
+                    parseInt(document.getElementById('unit').value)
+                ]
+            };
+            
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('predicted-salary').innerText = data.prediction[0].toFixed(2);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
